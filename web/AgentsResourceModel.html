@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<!--
+/home/peter/public_html/wps/AgentsResourceModel.html
+Peter Kutschera, Tue Oct 15 10:36:24 2013$
+$Id$
+Time-stamp: "2014-02-06 13:58:33 peter"
+Peter.Kutschera@ait.ac.at   (AIT - Austrian Institute of Technology)
+Peter@Kutschera.at          (privat)
+http://Peter.Kutschera.at/
+© Peter Kutschera
+-->
+
+<html>
+<head>
+<meta name="Author" content="Peter.Kutschera@ait.ac.at">
+<title>AgentsResourceModel.html</title>
+
+<script src="jquery-1.10.2.min.js"></script>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $("button").click(function(){
+     var wsid = $("#wsid").val();
+     var duration = $("#duration").val();
+     var stepduration = $("#stepduration").val();
+     var url = "http://crisma.ait.ac.at/models/pywps.cgi?service=WPS&request=Execute&version=1.0.0&identifier=AgentsResourceModel&datainputs=WorldStateId=" + wsid + ";duration=" + duration + ";stepduration=" + stepduration ;
+     window.open (url); 
+    });
+  });
+</script>
+
+</head>
+<body>
+<H1><center>
+AgentsResourceModel
+</center></H1>
+<hr>
+<p>
+
+
+This WPS will start the Agents-based resource model starting with a given WoldState, a duration of time to simulate and produce a resulting WoldState. Intermediate WorldStates are created after every step-duration.
+<br>
+The WorldStates are directly accessed at the OOI-WSR.
+<p>
+As this model will run some time it will not return a result directly. Instead a URL is returned that can be used to monitor the progress and get information about the model result. 
+See <a href="http://www.opengeospatial.org/standards/wps">OGC PWS spec</a> Version 1.0.0 page 30 and 31.
+<p>
+Executing the WPS will return a URL to a web page containing a JSON doument:
+<pre>
+{
+ "progress" : "0%",
+ "worldstateids" : [1]
+}
+</pre>
+The content of the web page will change over time till something like this is returned:
+<pre>
+{
+ "progress" : "100%",
+ "worldstateids" : [1, 17, 18, 19, 20, 21, 22]
+}
+</pre>
+
+<p>
+
+<h3>Access to the AgentsResourceModel (WPS):</h3>
+<ol>
+<li> <a href='http://crisma.ait.ac.at/models/pywps.cgi?service=WPS&request=GetCapabilities'>GetCapabilities</a>
+<li> <a href='http://crisma.ait.ac.at/models/pywps.cgi?service=WPS&request=DescribeProcess&version=1.0.0&identifier=AgentsResourceModel'>DescribeProcess</a>
+<li> Start model:
+ <br>
+WordStateId = <input type="text" id="wsid" value="1"> 
+ <br>
+Duration of simulation = <input type="number" id="duration" value="60"> minutes
+ <br>
+Duration between intermediate steps = <input type="number" id="stepduration" value="10"> minutes
+ <br>
+<button>Execute</button>
+</ol>
+
+
+Execute-example: <a href='http://crisma.ait.ac.at/models/pywps.cgi?service=WPS&request=Execute&version=1.0.0&identifier=AgentsResourceModel&datainputs=WorldStateId=1;duration=60;stepduration=10'>http://crisma.ait.ac.at/models/pywps.cgi?service=WPS&request=Execute&version=1.0.0&identifier=AgentsResourceModel&datainputs=WorldStateId=1;duration=60;stepduration=10</a>
+
+<p>
+
+See <a href='http://crisma-ooi.ait.ac.at/swaggerui/'>WorldState repository</a> for valid WorldState URIs.
+
+<p>
+
+See <a href="http://wiki.rsg.pml.ac.uk/pywps/Main_Page">PyWPS WIKI</a> for details.
+
+
+
+
+
+
+</p>
+<hr>
+<address>
+Last update:
+2013-10-31
+by <a href="mailto:Peter.Kutschera@ait.ac.at">Peter Kutschera</a><br>
+Copyright &#169 Peter Kutschera
+</address>
+
+</body>
+</html>
+
+
