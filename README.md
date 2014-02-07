@@ -10,19 +10,19 @@ WPS frontend for the AgentsResourceModel
 
    See http://pywps.wald.intevation.org/
 
-# Update python
+## Update python
 
    a recent version of the requests library is needed
 
-# Edit the Makefile 
+## Edit the Makefile 
 
-# Edit wps/pywps.cfg
+## Edit wps/pywps.cfg
 
    The line "serveraddress" need to match your server name and the WEB_PATH in the Makefile
 
-# sudo make install
+## sudo make install
 
-# Test the installation with the provided test-pages.
+## Test the installation with the provided test-pages.
 
 
 
