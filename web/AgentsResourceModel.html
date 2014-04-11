@@ -3,7 +3,7 @@
 /home/peter/public_html/wps/AgentsResourceModel.html
 Peter Kutschera, Tue Oct 15 10:36:24 2013$
 $Id$
-Time-stamp: "2014-02-06 13:58:33 peter"
+Time-stamp: "2014-04-11 11:05:15 peter"
 Peter.Kutschera@ait.ac.at   (AIT - Austrian Institute of Technology)
 -->
 
@@ -27,29 +27,35 @@ Peter.Kutschera@ait.ac.at   (AIT - Austrian Institute of Technology)
 
 <html>
 <head>
-<meta name="Author" content="Peter.Kutschera@ait.ac.at">
-<title>AgentsResourceModel.html</title>
-
-<script src="jquery-1.10.2.min.js"></script>
-<script type="text/javascript">
-  $(document).ready(function(){
-    $("button").click(function(){
-     var wsid = $("#wsid").val();
-     var duration = $("#duration").val();
-     var stepduration = $("#stepduration").val();
-     var url = "http://crisma.ait.ac.at/models/pywps.cgi?service=WPS&request=Execute&version=1.0.0&identifier=AgentsResourceModel&datainputs=WorldStateId=" + wsid + ";duration=" + duration + ";stepduration=" + stepduration ;
-     window.open (url); 
-    });
-  });
-</script>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="Author" content="Peter.Kutschera@ait.ac.at">
+  <title>AgentsResourceModel.html</title>
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <script src="js/angular-1.2.13/angular.js"></script>
+  <script src="js/jquery-2.0.3.min.js"></script>
+  <script src="js/spin.min.js"></script>
+  <script src="js/jquery.spin.js"></script>
+  <script src="js/xml2json.min.js"></script>
+  <script src="libs/wpsControllers.js"></script>
+  <!-- bootstrap -->
+  <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css">
+  <script src="bootstrap/js/bootstrap.min.js"></script>
+  <style type="text/css">
+    <!--
+	.big { font-size:20pt }
+      -->
+  </style>
 </head>
-<body>
-<H1><center>
-AgentsResourceModel
-</center></H1>
-<hr>
-<p>
+<body ng-app="wpsApp" ng-controller="wpsCtrl">
+  <div class="container">
+    <H1><center>
+	AgentsResourceModel
+    </center></H1>
+    <hr>
+    <p>
 
 
 This WPS will start the Agents-based resource model starting with a given WoldState, a duration of time to simulate and produce a resulting WoldState. Intermediate WorldStates are created after every step-duration.
@@ -77,22 +83,44 @@ The content of the web page will change over time till something like this is re
 <p>
 
 <h3>Access to the AgentsResourceModel (WPS):</h3>
-<ol>
-<li> <a href='http://crisma.ait.ac.at/models/pywps.cgi?service=WPS&request=GetCapabilities'>GetCapabilities</a>
-<li> <a href='http://crisma.ait.ac.at/models/pywps.cgi?service=WPS&request=DescribeProcess&version=1.0.0&identifier=AgentsResourceModel'>DescribeProcess</a>
-<li> Start model:
- <br>
-WordStateId = <input type="text" id="wsid" value="1"> 
- <br>
-Duration of simulation = <input type="number" id="duration" value="60"> minutes
- <br>
-Duration between intermediate steps = <input type="number" id="stepduration" value="10"> minutes
- <br>
-<button>Execute</button>
-</ol>
 
 
-Execute-example: <a href='http://crisma.ait.ac.at/models/pywps.cgi?service=WPS&request=Execute&version=1.0.0&identifier=AgentsResourceModel&datainputs=WorldStateId=1;duration=60;stepduration=10'>http://crisma.ait.ac.at/models/pywps.cgi?service=WPS&request=Execute&version=1.0.0&identifier=AgentsResourceModel&datainputs=WorldStateId=1;duration=60;stepduration=10</a>
+  <form class="form-horizontal" role="form">
+    <div class="form-group">
+      <label for="capabilities">Get a description of the WPS instance and list of all processes (e.g. models) available</label>
+      <p class="form-control-static" id="capabilities">
+	<a href='{{wpsEndpoint}}?service=WPS&request=GetCapabilities' target='GetCapabilities'>{{wpsEndpoint}}?service=WPS&request=GetCapabilities</a>
+      </p>
+    </div>
+    
+    <div class="form-group">
+      <label for="iselect">Select process (model) to use</label>
+      <select id="iselect" class="form-control" ng-model="indicator" ng-options="indi for indi in indicators"></select>
+    </div>
+    
+    
+    <div class="form-group">
+      <label for="describe">Get a description of the selected process (model)</label>
+      <p class="form-control-static" id="describe">
+	<a href='{{wpsEndpoint}}?service=WPS&request=DescribeProcess&version=1.0.0&identifier={{indicator}}' target='DescribeProcess'>{{wpsEndpoint}}?service=WPS&request=DescribeProcess&version=1.0.0&identifier={{indicator}}</a>
+      </p>
+    </div>
+    
+    
+    <div class="form-group">
+      <label for="icmm">Select ICMM worldstate URL to use</label>
+      <input id="icmm" class="form-control" type="url" ng-model="worldstateUrl" required></input> 
+    </div>
+    
+    
+    <div class="form-group">
+      <label for="execute">Execute the selected process (model) with the given ICMM worldstate URL as parameter</label>
+      <p class="form-control-static" id="execute">
+	<a href='{{wpsEndpoint}}?service=WPS&request=Execute&version=1.0.0&identifier={{indicator}}&datainputs=ICMMworldstateURL={{worldstateUrl}}' target='Execute'>{{wpsEndpoint}}?service=WPS&request=Execute&version=1.0.0&identifier={{indicator}}&datainputs=ICMMworldstateURL={{worldstateUrl}}</a>
+      </p>
+    </div>
+    
+  </form>
 
 <p>
 
@@ -111,7 +139,7 @@ See <a href="http://wiki.rsg.pml.ac.uk/pywps/Main_Page">PyWPS WIKI</a> for detai
 <hr>
 <address>
 Last update:
-2013-10-31
+2014-04-11
 by <a href="mailto:Peter.Kutschera@ait.ac.at">Peter Kutschera</a><br>
 Copyright &#169 Peter Kutschera
 </address>

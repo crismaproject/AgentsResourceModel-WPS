@@ -45,13 +45,9 @@ class Process(WPSProcess):
             statusSupported = True,
             abstract="Runs resource model starting from a given WorldState",
             grassLocation = False)
-        self.WorldState = self.addLiteralInput (identifier = "WorldStateId",
-                                                # type = type(""), # default: integer
-                                                title = "One particular WorldState")
-        self.duration = self.addLiteralInput (identifier = "duration",
-                                                title = "Simulated time span [minutes]")
-        self.stepduration = self.addLiteralInput (identifier = "stepduration",
-                                                title = "Time between created intermediate WorldStates [minutes]")
+        self.ICMMworldstateURL = self.addLiteralInput (identifier = "ICMMworldstateURL",
+                                                type = type(""),
+                                                title = "ICMM WorldState id")
         self.Answer=self.addLiteralOutput(identifier = "StatusPage",
                                           type = type (""),
                                           title = "URL of status page")
@@ -60,22 +56,16 @@ class Process(WPSProcess):
     def execute(self):
         baseUrl = 'http://193.40.13.83/PilotC/Startup/startup.aspx'
 
-        worldStateId = self.WorldState.getValue();
-        self.status.set("Check WorldState {} status".format (worldStateId), 10)
-        duration = self.duration.getValue();
-        stepduration = self.stepduration.getValue();
-        self.status.set("duration = {}, stepduration = {}".format (duration, stepduration), 11)
+        worldStateURL = self.ICMMworldstateURL.getValue();
 
-        self.status.set("Will start model now", 50)
+        self.status.set("Will start model now", 10)
 
         params = {
-            'wsid' :  worldStateId, 
-            'intervalsec' : stepduration * 60,
-            'totalsimtimesec' : duration * 60
+            'ICMMworldstateURL' :  worldStateURL
             }
 
         statusURL = requests.get(baseUrl, params=params) 
-        
+        self.status.set("request sent: {}".format (statusURL.url), 89)
         self.status.set("request returned {}".format (statusURL.status_code), 90)
 
         if statusURL.status_code != 200:
